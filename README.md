@@ -1,59 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🥔 Proyecto Papa
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este es un sistema web desarrollado en **Laravel** que implementa un sistema de autenticación completo utilizando **Laravel Breeze** y **Laravel Socialite** para el inicio de sesión con Google (OAuth 2.0).
 
-## About Laravel
+## 📋 Requisitos Previos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+* PHP >= 8.1
+* Composer
+* Node.js & NPM
+* Base de datos (MySQL, MariaDB o SQLite)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Instalación
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Clonar el repositorio:**
 
-## Learning Laravel
+   ```bash
+   git clone https://github.com/JoelynCapyrby777/ProyectoAuth.git
+   cd proyecto-papa
+   ```
+2. **Instalar dependencias de PHP y Node:**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+   ```bash
+   composer install
+   npm install
+   ```
+3. **Configurar el entorno:**
+   Duplica el archivo de ejemplo y genera la llave de la aplicación:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. **Configurar Base de Datos:**
+   Abre el archivo `.env`, configura tus credenciales de base de datos (`DB_DATABASE`, `DB_USERNAME`, etc.) y ejecuta las migraciones:
 
-## Laravel Sponsors
+   ```bash
+   php artisan migrate
+   ```
+5. **Compilar recursos frontend:**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   ```bash
+   npm run build
+   ```
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## ⚙️ Configuración Obligatoria
 
-## Contributing
+Para que el proyecto funcione correctamente (especialmente el Login con Google), debes seguir estos pasos de configuración:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1. Configuración SSL (cacert.pem)
 
-## Code of Conduct
+Es necesario configurar los certificados SSL locales para evitar errores de cURL al conectar con Google.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Sigue las instrucciones detalladas en este repositorio:
+   👉 **[Instrucciones cacert.pem](https://github.com/FilipQL/cacert.pem)**
+2. Básicamente, descarga el archivo `.pem`, colócalo en tu carpeta de PHP y edita tu `php.ini` apuntando `curl.cainfo` a la ubicación de ese archivo.
 
-## Security Vulnerabilities
+### 2. Google OAuth 2.0
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Debes crear un proyecto en Google Cloud Console para obtener tus credenciales.
 
-## License
+1. Ve a [Google Cloud Console](https://console.cloud.google.com/).
+2. Crea un nuevo proyecto y configura la pantalla de consentimiento OAuth.
+3. Crea credenciales de tipo **ID de cliente de OAuth** (Aplicación Web).
+4. **IMPORTANTE:** En "URI de redireccionamiento autorizados", asegúrate de usar tu host personalizado.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+   * **URI de redirección:** `http://ejemplo.com/auth/google/callback`
+5. Copia el **Client ID** y **Client Secret** en tu archivo `.env`:
+
+   ```ini
+   GOOGLE_CLIENT_ID=tu-id-de-cliente
+   GOOGLE_CLIENT_SECRET=tu-secreto-de-cliente
+   GOOGLE_REDIRECT_URL=http://ejemplo.com/auth/google/callback
+   ```
+
+### 3. Configuración del Host Local
+
+Para usar el dominio personalizado `ejemplo.com` en local:
+
+1. Abre tu archivo de `hosts` como administrador:
+
+   * **Windows:** `C:\Windows\System32\drivers\etc`
+2. Agrega la siguiente línea al final:
+
+   ```text
+   127.0.0.1 ejemplo.com
+   ```
+
+---
+
+## 🏁 Ejecución del Proyecto
+
+Para levantar el servidor y que coincida con la configuración de Google OAuth y el Host, ejecuta el siguiente comando (puedes requerir permisos de administrador para el puerto 80):
+
+```bash
+php artisan serve --host proyectopapa.com --port=80
+```
