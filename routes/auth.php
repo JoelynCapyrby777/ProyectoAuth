@@ -10,6 +10,29 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+use App\Models\User;
+
+Route::get('google-auth/redirect',function(){
+    return Socialite::driver('google')->redirect();
+});
+
+Route::get('google-auth/callback',function(){
+    $user_google = Socialite::driver('google')->user();
+    $user = User::updateOrCreate(
+        [
+            'google_id' => $user_google->id,
+        ],
+        [
+            'name' => $user_google->name,
+            'email' => $user_google->email,
+
+        ]
+    );
+    Auth::login($user);
+    return redirect('/dashboard');
+});
+
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
